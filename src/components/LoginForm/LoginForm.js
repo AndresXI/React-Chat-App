@@ -16,7 +16,7 @@ class LoginForm extends Component {
    * Set the user
    * */
   setUser = ({user, isUser}) => {
-    console.log(user, isUser);
+    console.log(isUser);
     if (isUser) {
       this.setError("User name taken");
     } else {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import {USER_CONNECTED, LOGOUT} from '../../Events';
 import LoginForm from '../LoginForm/LoginForm'
+import ChatContainer from '../Chats/ChatContainer.js'
 
 
 /** Url to connect to our server */
@@ -35,15 +36,18 @@ class Layout extends Component {
 
 
   /**
-    Set the user property in sate
+   * Set the user property in sate
+   * @param {Object} user - The user that will connect in our chat
+   * @param {number} user.id - The user id
+   * @param {string} user.nam - The user name
    */
   setUser = (user) => {
     const { socket } = this.state;
     socket.emit(USER_CONNECTED, user);
-    this.setState({ socket })
+    this.setState({ user: user });
   };
 
-  /** Lets the user logout */
+  /** Lets the user logout. */
   logout = () => {
     // Emmit to the server that the user has logged out
     const { socket } = this.state;
@@ -53,11 +57,13 @@ class Layout extends Component {
 
 
   render() {
-    const {socket } = this.state;
+    const {socket, user } = this.state;
 
     return (
       <div className="container">
-        <LoginForm socket={socket} setUser={this.setUser} />
+        <ChatContainer socket={socket} user={user} logout={this.logout}/>
+        {/*{!user ? <LoginForm socket={socket} setUser={this.setUser} /> :*/}
+          {/*<ChatContainer socket={socket} user={user} logout={this.logout}/>}*/}
       </div>
     )
   }
