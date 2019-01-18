@@ -11,7 +11,6 @@ class LoginForm extends Component {
     }
   }
 
-
   /**
    * Set the user
    * */
@@ -25,7 +24,6 @@ class LoginForm extends Component {
     }
   };
 
-
   /**
    * Handles the submit form
    *  */
@@ -37,14 +35,13 @@ class LoginForm extends Component {
     // emmit to the server
     socket.emit(VERIFY_USER, nickname, this.setUser);
   };
-
-
+  
   /**
    * Handles the change when the form is changed
    * */
   handleChange = (e) => {
     this.setState({ nickname: e.target.value });
-  };
+  }; 
 
   /**
    * Set the error message.
@@ -52,7 +49,6 @@ class LoginForm extends Component {
   setError = (errorMessage) => {
     this.setState({error: errorMessage});
   };
-
 
   render() {
     const { nickname, error } = this.state;

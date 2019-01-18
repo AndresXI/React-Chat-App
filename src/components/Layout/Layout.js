@@ -22,15 +22,12 @@ class Layout extends Component {
     this.initSocket();
   }
 
-
   /** Initialize and connect socket.io */
   initSocket = () => {
     const socket = io(socketUrl);
-
     socket.on('connect', () => {
       console.log('CLIENT CONNECTED');
     });
-
     this.setState({ socket });
   };
 
@@ -61,9 +58,11 @@ class Layout extends Component {
 
     return (
       <div className="container">
-        <ChatContainer socket={socket} user={user} logout={this.logout}/>
-        {/*{!user ? <LoginForm socket={socket} setUser={this.setUser} /> :*/}
-          {/*<ChatContainer socket={socket} user={user} logout={this.logout}/>}*/}
+        {
+          !user ?
+            <LoginForm socket={socket} setUser={this.setUser} />:
+            <ChatContainer socket={socket} user={user} logout={this.logout} />
+        }
       </div>
     )
   }

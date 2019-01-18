@@ -17,7 +17,6 @@ class ChatContainer extends Component {
     this.setState({activeChat: activeChat})
   };
 
-
   render() {
     const { user, logout} = this.props;
     const {chats, activeChat} = this.state;
@@ -36,3 +35,4 @@ class ChatContainer extends Component {
 }
 
 export default ChatContainer;
+

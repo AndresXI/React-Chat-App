@@ -8,56 +8,62 @@ class SideBar extends Component {
     const {chats, activeChat, user, setActiveChat, logout} = this.props;
 
     return (
-      <div className="chat-container__sideBar">
-        <div className="chat-container__sideBar-heading">
-          <div className="chat-container__sideBar-title">React Chat App<FaChevronDown/></div>
-          <div className="menu">
+      <div className="chat-container__sidebar">
+        <div className="chat-container__sidebar chat-container__sidebar-heading">
+          <div className="chat-container__sidebar chat-container__sidebar-heading-title">
+            React Chat App
+          </div>
+          <div className="chat-container__sidebar chat-container__sidebar-heading-icon">
+            <FaChevronDown />
+          </div>
+          <div className="chat-container__sidebar chat-container__sidebar-heading-menu">
             <FaBars/>
           </div>
         </div>
 
-        <div className="search">
-          <i className="search-icon"><FaSearch/></i>
+        <div className="chat-container__sidebar chat-container__sidebar-searchContainer">
+        
           <input type="text" placeholder="Search..."/>
-          <div className="plus"></div>
+          <i><FaSearch /></i>
+          
         </div>
-
+      
         <div
           ref="users"
-          // onClick={(e) => {(e.target === this.ref.user) && setActiveChat(null)}}
-          className="users">
+          onClick={(e) => {(e.target === this.ref.user) && setActiveChat(null)}}
+          className="chat-container__sidebar chat-container__sidebar-users">
 
-          {/*{*/}
-            {/*chats.map((chat) => {*/}
-              {/*if (chat.name) {*/}
-                {/*const lastMessage = chat.messages[chat.message.length - 1];*/}
-                {/*const user = chat.users.find(({name}) => {*/}
-                  {/*return name !== this.props.name*/}
-                {/*}) || { name: "Community" }*/}
-                {/*const classNames = (activeChat && activeChat.id === chat.id) ? 'active' : ''*/}
+          {
+            chats.map((chat) => {
+              if (chat.name) {
+                const lastMessage = chat.messages[chat.message.length - 1];
+                const user = chat.users.find(({name}) => {
+                  return name !== this.props.name
+                }) || { name: "Community" }
+                const classNames = (activeChat && activeChat.id === chat.id) ? 'active' : ''
 
-                {/*return (*/}
-                  {/*<div*/}
-                    {/*className={`user ${classNames}`}*/}
-                    {/*onClick={() => setActiveChat(chat)}*/}
-                    {/*key={chat.id}>*/}
+                return (
+                  <div
+                    className={`user ${classNames}`}
+                    onClick={() => setActiveChat(chat)}
+                    key={chat.id}>
 
-                    {/*<div className="user-photo">{user.name[0].toUpperCase()}</div>*/}
-                    {/*<div className="user-info">*/}
-                      {/*<div className="name">{user.name}</div>*/}
-                      {/*{lastMessage && <div className="last-message">{lastMessage.message}</div>}*/}
-                    {/*</div>*/}
+                    <div className="user-photo">{user.name[0].toUpperCase()}</div>
+                    <div className="user-info">
+                      <div className="name">{user.name}</div>
+                      {lastMessage && <div className="last-message">{lastMessage.message}</div>}
+                    </div>
 
-                  {/*</div>*/}
-                {/*)*/}
-              {/*}*/}
-              {/*return null;*/}
-            {/*})*/}
-          {/*}*/}
-        </div>
+                  </div>
+                )
+                }
+              return null;
+              })
+          }
+      </div> 
 
-        <div className="current-user">
-          {/*<span>{user.name}</span>*/}
+        <div className="chat-container__sidebar chat-container__sidebar-current-user">
+          <span>{user.name}</span>
           <div className="logout" onClick={() => logout()} title="Logout">
             <MdEject/>
           </div>
