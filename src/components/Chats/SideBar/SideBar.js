@@ -60,7 +60,7 @@ class SideBar extends Component {
             <MdEject />
           </div>
         </div>
-      </div>;
+      </div>
   }
 }
 

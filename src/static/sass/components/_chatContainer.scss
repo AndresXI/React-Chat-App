@@ -4,10 +4,12 @@
   left: 0;
   width: 40rem;
   height: 100%;
+  // display: flex;
 
   &__sidebar {
     color: $color-sidebar-text;
-  
+    z-index: 34;
+ 
 
     &-heading {
       padding: 2rem;
@@ -88,6 +90,8 @@
      
     }
   }
+  
+  
 }
 
   faChevronDown {
