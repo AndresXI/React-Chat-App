@@ -1,10 +1,22 @@
 .chat-room {
-  
- 
+  background-color: lighten($color-background-chat, 10%);
+  height: 71%;
+
   &__heading {
     position: relative;
     font-size: 4rem;
-    top: 35rem;
+    top: 55rem;
     text-align: center;
   }
+}
+
+.chat-roomContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  height: 134%;
+  position: relative;
+  left: 40rem;
+  bottom: 20rem;
 }
