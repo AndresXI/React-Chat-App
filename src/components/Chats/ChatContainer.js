@@ -129,10 +129,8 @@ class ChatContainer extends Component {
                   sendTyping={(doneTyping) => {this.sendTyping(activeChat.id, doneTyping)}}
                   sendMessage={(message) => {this.sendMessage(activeChat.id, message)}}/>  
               </div>
-            ) : 
-           
-              <h3>Choose a chat!</h3>
-           
+            ) 
+            : <h3 className="chat-room__heading">Choose a chat from above!</h3>
           }
         </div>
       </div>
