@@ -108,7 +108,7 @@ class ChatContainer extends Component {
     const {chats, activeChat} = this.state;
 
     return (
-      <div className="chat-container">
+      <div className="container">
         <SideBar
           logout={logout}
           chats={chats}
@@ -116,7 +116,7 @@ class ChatContainer extends Component {
           activeChat={activeChat}
           setActiveChat={this.setActiveChat}/>
 
-        <div className="chat-room">
+        <div className="chatRoom">
           {
             activeChat !== null ? (
               <div className="chat-roomContainer">

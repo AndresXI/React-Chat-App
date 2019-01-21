@@ -7,29 +7,28 @@ class SideBar extends Component {
   render() {
     const {chats, activeChat, user, setActiveChat, logout} = this.props;
 
-    return <div className="chat-container__sidebar">
-        <div className="chat-container__sidebar chat-container__sidebar-heading">
-          <div className="chat-container__sidebar chat-container__sidebar-heading-title">
+    return ( 
+      <div className="sidebar">
+
+        <div className="sidebar__heading">
+          <div className="sidebar__heading-title">
             React Chat App
-          </div>
-          <div className="chat-container__sidebar chat-container__sidebar-heading-icon">
             <FaChevronDown />
           </div>
-          <div className="chat-container__sidebar chat-container__sidebar-heading-menu">
+          <div className="sidebar__heading-menuIcon">
             <FaBars />
           </div>
         </div>
 
-        <div className="chat-container__sidebar chat-container__sidebar-searchContainer">
+        <div className="sidebar__searchContainer">
+          <i className="sidebar__searchContainer--searchIcon"><FaSearch /></i>
           <input type="text" placeholder="Search..." />
-          <i>
-            <FaSearch />
-          </i>
         </div>
 
-        <div ref="users" onClick={e => {
-            e.target === this.ref.user && setActiveChat(null);
-          }} className="chat-container__sidebar chat-container__sidebar-users">
+        <div ref="users" 
+            onClick={(e) => { (e.target === this.refs.user) && setActiveChat(null)}} 
+            className="sidebar__users">
+
           {chats.map(chat => {
             if (chat.name) {
               const lastMessage = chat.messages[chat.messages.length - 1];
@@ -39,15 +38,15 @@ class SideBar extends Component {
               const classNames = activeChat && activeChat.id === chat.id ? "active" : "";
 
               return ( 
-                    <div className={`user ${classNames}`} 
+                    <div className={`sidebar__users--user ${classNames}`} 
                         onClick={() => setActiveChat(chat)} 
                         key={chat.id}>
 
-                      <div className="user-photo">
+                      <div className="sidebar__users--userPhoto">
                         {user.name[0].toUpperCase()}
                       </div>
 
-                      <div className="user-info">
+                      <div className="sidebar__users--userInfo">
                         <div className="name">{user.name}</div>
 
                         {lastMessage && <div className="last-message">
@@ -61,13 +60,14 @@ class SideBar extends Component {
           })}
         </div>
 
-        <div className="chat-container__sidebar chat-container__sidebar-current-user">
-          <span className="username">{user.name}</span>
-          <div className="logout-btn" onClick={() => logout()} title="Logout">
+        <div className="sidebar__currentUser">
+          <span className="sidebar__currentUser--username">{user.name}</span>
+          <div className="sidebar__currentUser--logoutBtn" onClick={() => logout()} title="Logout">
             <MdEject />
           </div>
         </div>
-      </div>
+      </div> 
+  )
   }
 }
 

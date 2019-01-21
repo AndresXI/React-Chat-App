@@ -15,8 +15,8 @@
 	margin: 0;
 	padding: 0;
 	border: 0;
-   vertical-align: baseline;
-   box-sizing: inherit;
+	vertical-align: baseline;
+	box-sizing: inherit;
 }
 
 /* HTML5 display-role reset for older browsers */
@@ -43,13 +43,15 @@
 	border-spacing: 0;
 }
 
-body {
-	box-sizing: border-box;
-	background-color: fff;
+html {
+	height: 100vh;
+	// this defines what 1rem is --> font root size 
+	font-size: 62.5%; // 10/16, 1rem = 10px; 
 }
 
-html {
-   // this defines what 1rem is --> font root size 
-   font-size: 62.5%; // 10/16, 1rem = 10px; 
+body {
+	height: inherit;
+	box-sizing: border-box;
+	background-color: fff;
 }
 
