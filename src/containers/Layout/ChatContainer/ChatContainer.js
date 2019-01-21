@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import SideBar from './SideBar/SideBar.js'
-import { COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED, TYPING } from '../../Events';
-import ChatHeading from './ChatHeading';
-import Messages from './Messages/Messages';
-import MessageInput from './Messages/MessageInput/MessageInput';
+import SideBar from '../../../components/SideBar/SideBar';
+import { COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED, TYPING } from '../../../Events';
+import ChatHeading from '../../../components/ChatRoom/ChatHeading/ChatHeading';
+import Messages from '../../../components/ChatRoom/Messages/Messages';
+import MessageInput from '../../../components/ChatRoom/MessageInput/MessageInput';
 
 
 
@@ -109,6 +109,7 @@ class ChatContainer extends Component {
 
     return (
       <div className="container">
+
         <SideBar
           logout={logout}
           chats={chats}
@@ -119,18 +120,24 @@ class ChatContainer extends Component {
         <div className="chatRoom">
           {
             activeChat !== null ? (
-              <div className="chat-roomContainer">
+              <div className="chatRoom__container">
                 <ChatHeading name={activeChat.name}/>
+
                 <Messages 
                   typingUser={activeChat.typingUsers}
                   user={user}
                   messages={activeChat.messages}/>
+
                 <MessageInput 
-                  sendTyping={(doneTyping) => {this.sendTyping(activeChat.id, doneTyping)}}
-                  sendMessage={(message) => {this.sendMessage(activeChat.id, message)}}/>  
+                  sendTyping={(doneTyping) => {
+                    this.sendTyping(activeChat.id, doneTyping)
+                  }}
+                  sendMessage={(message) => {
+                    this.sendMessage(activeChat.id, message)
+                    }}/>  
               </div>
             ) 
-            : <h3 className="chat-room__heading">Choose a chat from above!</h3>
+            : <h3 className="chatRoom__heading">Choose a chat room!</h3>
           }
         </div>
       </div>

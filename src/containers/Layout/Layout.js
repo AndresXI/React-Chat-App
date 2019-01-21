@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
 import {USER_CONNECTED, LOGOUT} from '../../Events';
-import LoginForm from '../LoginForm/LoginForm'
-import ChatContainer from '../Chats/ChatContainer.js'
+import LoginForm from './LoginForm/LoginForm';
+import ChatContainer from './ChatContainer/ChatContainer';
 
 
 /** Url to connect to our server */

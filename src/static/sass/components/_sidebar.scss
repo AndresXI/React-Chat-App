@@ -68,6 +68,26 @@
     overflow-y: scroll;
     background: #3e3e5e;
     flex-grow: 1;
+    font-size: 1.4rem;
+
+    &--user {
+      align-items: center;
+      display: flex;
+      height: 66px;
+      justify-content: flex-start;
+      padding: 18px 16px;
+      background-color: pink;
+      cursor: pointer;
+    }
+
+    &--userPhoto {
+
+    }
+
+    &--userInfo {
+      margin-left: 15px;
+      flex-grow: 1;
+    }
   }
 
   &__currentUser {
@@ -81,6 +101,15 @@
     justify-content: space-between;
     padding-left: 16px;
     padding-right: 16px;
+
+    &--username {
+      font-size: 1.4rem;
+    }
+
+    &--logoutBtn {
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
   }
 
 }
