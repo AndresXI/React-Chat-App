@@ -87,6 +87,10 @@
     &--userInfo {
       margin-left: 15px;
       flex-grow: 1;
+
+      & > .last-message {
+        font-size: 34px;
+      }
     }
   }
 

@@ -16,11 +16,12 @@ class LoginForm extends Component {
    * */
   setUser = ({user, isUser}) => {
     console.log(isUser);
+
     if (isUser) {
       this.setError("User name taken");
     } else {
-      this.props.setUser(user);
       this.setError("");
+      this.props.setUser(user);
     }
   };
 
@@ -47,7 +48,7 @@ class LoginForm extends Component {
    * Set the error message.
    * */
   setError = (errorMessage) => {
-    this.setState({error: errorMessage});
+    this.setState({ error: errorMessage });
   };
 
   render() {
@@ -66,7 +67,7 @@ class LoginForm extends Component {
             id="nickname"
             value={nickname}
             placeholder={'Enter your name here...'}
-            ref={(input)=>{this.textInput = input}} />
+            ref={ (input) => {this.textInput = input} } />
 
           <div className="error">{error ? error: null}</div>
         </form>

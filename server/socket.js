@@ -55,6 +55,7 @@ module.exports = function (socket) {
   //User logout 
   socket.on(LOGOUT, () => {
     connectedUsers = removeUser(connectedUsers, socket.user.name)
+    
     io.emit(USER_DISCONNECTED, connectedUsers)
     console.log("Disconnect", connectedUsers);
 
@@ -66,6 +67,8 @@ module.exports = function (socket) {
   });
 
   socket.on(MESSAGE_SENT, ({ chatId, message }) => {
+    console.log(message, chatId);
+
     sendMessageToChatFromUser(chatId, message)
   });
 

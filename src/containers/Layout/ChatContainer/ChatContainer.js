@@ -10,6 +10,7 @@ import MessageInput from '../../../components/ChatRoom/MessageInput/MessageInput
 class ChatContainer extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       chats: [],
       activeChat: null
@@ -18,7 +19,7 @@ class ChatContainer extends Component {
 
   componentDidMount() {
     const {socket} = this.props;
-    socket.emit(COMMUNITY_CHAT, this.resetChat)
+    socket.emit(COMMUNITY_CHAT, this.resetChat);
   };
 
   /**
@@ -26,6 +27,7 @@ class ChatContainer extends Component {
    * @param chat {Chat}
    */
   resetChat = (chat) => {
+    console.log('reset chat..', chat)
     return this.addChat(chat, true);
   };
 
@@ -37,13 +39,14 @@ class ChatContainer extends Component {
    * @param reset {boolean} if true will set the chat as the only chat
    */
   addChat = (chat, reset) => {
+    // console.log(chat);
     const {socket} = this.props;
     const {chats} = this.state;
 
     const newChats = reset ? [chat] : [...chats, chat];
-    this.setState({chats: newChats});
-
-    const messageEvent = `${MESSAGE_RECEIVED}-${chat.id}}`;
+    this.setState({ chats: newChats, activeChat: reset ? chat : this.state.activeChat });
+    
+    const messageEvent = `${MESSAGE_RECEIVED}-${chat.id}`;
     const typingEvent = `${TYPING}-${chat.id}}`;
 
     socket.on(typingEvent);
@@ -55,12 +58,13 @@ class ChatContainer extends Component {
    * to chat with the chatId passed in.
    */
   addMessageToChat = (chatId) => {
+
     return message => {
       const {chats} = this.state;
 
       let newChats = chats.map((chat) => {
-        if (chat.id === chatId) {
-          chat.message.push(message);
+        if (chat.id === chatId) {         
+          chat.messages.push(message);
         }
         return chat;
       });
@@ -80,6 +84,7 @@ class ChatContainer extends Component {
    * Set the active chat to our state.
    * */
   setActiveChat = (activeChat) => {
+    // console.log(activeChat);
     this.setState({activeChat: activeChat});
   };
 
@@ -89,6 +94,7 @@ class ChatContainer extends Component {
    * @param message {string} The message to be added to the chat
    */
   sendMessage = (chatId, message) => {
+    console.log(message, chatId);
     const {socket} = this.props;
     socket.emit(MESSAGE_SENT, {chatId, message});    
   }
@@ -98,10 +104,11 @@ class ChatContainer extends Component {
    * chatId {number} the id of the chat being typed in.
    * typing (boolean) If the is still typing or not.
    */
-  sendTyping = (chatID, doneTyping) => {
+  sendTyping = (chatId, doneTyping) => {
     const {socket} = this.props;
     socket.emit(TYPING, {chatId, doneTyping});
   }
+
 
   render() {
     const { user, logout} = this.props;
@@ -124,7 +131,7 @@ class ChatContainer extends Component {
                 <ChatHeading name={activeChat.name}/>
 
                 <Messages 
-                  typingUser={activeChat.typingUsers}
+                  typingUsers={activeChat.typingUsers}
                   user={user}
                   messages={activeChat.messages}/>
 
@@ -132,7 +139,7 @@ class ChatContainer extends Component {
                   sendTyping={(doneTyping) => {
                     this.sendTyping(activeChat.id, doneTyping)
                   }}
-                  sendMessage={(message) => {
+                  sendMessage={ (message) => {
                     this.sendMessage(activeChat.id, message)
                     }}/>  
               </div>

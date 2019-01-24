@@ -29,32 +29,33 @@ class SideBar extends Component {
             onClick={(e) => { (e.target === this.refs.user) && setActiveChat(null)}} 
             className="sidebar__users">
 
-          {chats.map(chat => {
-            if (chat.name) {
-              const lastMessage = chat.messages[chat.messages.length - 1];
-              const user = chat.users.find(({ name }) => {
-                return name !== this.props.name;
-              }) || { name: "Community" };
-              const classNames = activeChat && activeChat.id === chat.id ? "active" : "";
+          {
+            chats.map(chat => {
+              if (chat.name) {
+                
+                const lastMessage = chat.messages[chat.messages.length - 1];
+                const user = chat.users.find(({ name }) => {
+                  return name !== this.props.name;
+                }) || { name: "Community" };
+                const classNames = activeChat && activeChat.id === chat.id ? "active" : "";
 
-              return ( 
-                    <div className={`sidebar__users--user ${classNames}`} 
-                        onClick={() => setActiveChat(chat)} 
-                        key={chat.id}>
+                return ( 
+                      <div className={`sidebar__users--user ${classNames}`} 
+                          onClick={() => setActiveChat(chat)} 
+                          key={chat.id}>
 
-                      <div className="sidebar__users--userPhoto">
-                        {user.name[0].toUpperCase()}
+                        <div className="sidebar__users--userPhoto">
+                          {user.name[0].toUpperCase()}
+                        </div>
+
+                        <div className="sidebar__users--userInfo">
+                          <div className="name">{user.name}</div>
+                          {lastMessage && <div className="last-message">
+                            {lastMessage.message}
+                          </div>}
+                        </div>
                       </div>
-
-                      <div className="sidebar__users--userInfo">
-                        <div className="name">{user.name}</div>
-
-                        {lastMessage && <div className="last-message">
-                          {lastMessage.message}
-                        </div>}
-                      </div>
-                    </div>
-                    );
+                      );
             }
             return null;
           })}
