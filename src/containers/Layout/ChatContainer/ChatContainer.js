@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import SideBar from '../../../components/SideBar/SideBar';
-import { COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED, TYPING } from '../../../Events';
+import { COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED, TYPING, PRIVATE_MESSAGE } from '../../../Events';
 import ChatHeading from '../../../components/ChatRoom/ChatHeading/ChatHeading';
 import Messages from '../../../components/ChatRoom/Messages/Messages';
 import MessageInput from '../../../components/ChatRoom/MessageInput/MessageInput';
@@ -20,8 +20,29 @@ class ChatContainer extends Component {
   componentDidMount() {
     const {socket} = this.props;
     socket.emit(COMMUNITY_CHAT, this.resetChat);
+    this.initSocket(socket);
   };
 
+  /**
+   * Initialize socket
+   */
+  initSocket = (socket) => {
+    const { user } = this.props;
+
+    socket.emit(COMMUNITY_CHAT, this.resetChat);
+    socket.on(PRIVATE_MESSAGE, this.addChat);
+    socket.on('connect', () => {
+      socket.emit(COMMUNITY_CHAT, this.resetChat);
+    });
+  };
+
+  /**
+   * Send private message
+   */
+  sendOpenPrivateMessage = (receiver) => {
+    const { socket, user } = this.props;
+    socket.emit(PRIVATE_MESSAGE, { receiver, sender: user.name });
+  }
   /**
    * Reset the chat back to only the chat passed in.
    * @param chat {Chat}
@@ -38,7 +59,7 @@ class ChatContainer extends Component {
    * @param chat {chat} the chat to be added.
    * @param reset {boolean} if true will set the chat as the only chat
    */
-  addChat = (chat, reset) => {
+  addChat = (chat, reset = false) => {
     // console.log(chat);
     const {socket} = this.props;
     const {chats} = this.state;
@@ -47,9 +68,9 @@ class ChatContainer extends Component {
     this.setState({ chats: newChats, activeChat: reset ? chat : this.state.activeChat });
     
     const messageEvent = `${MESSAGE_RECEIVED}-${chat.id}`;
-    const typingEvent = `${TYPING}-${chat.id}}`;
+    const typingEvent = `${TYPING}-${chat.id}`;
 
-    socket.on(typingEvent);
+    socket.on(typingEvent, this.updateTypingInChat(chat.id));
     socket.on(messageEvent, this.addMessageToChat(chat.id));
   };
 
@@ -77,7 +98,24 @@ class ChatContainer extends Component {
    * @param chatID {number}
    */
   updateTypingInChat = (chatId) => {
+    return ({ isTyping, user }) => {
+      if (user !== this.props.user.name) {
+        const { chats } = this.state;
 
+        let newChats = chats.map((chat) => {
+          if (chat.id === chatId) {
+            if (isTyping && !chat.typingUsers.includes(user)) {
+              chat.typingUsers.push(user);
+            } else if (!isTyping && chat.typingUsers.includes(user)) {
+              chat.typingUsers = 
+                chat.typingUsers.filter(username => username !== user)
+            }
+          }
+          return chat
+        });
+        this.setState({ chats: newChats })
+      }
+    }
   }
 
   /**
@@ -104,9 +142,9 @@ class ChatContainer extends Component {
    * chatId {number} the id of the chat being typed in.
    * typing (boolean) If the is still typing or not.
    */
-  sendTyping = (chatId, doneTyping) => {
+  sendTyping = (chatId, isTyping) => {
     const {socket} = this.props;
-    socket.emit(TYPING, {chatId, doneTyping});
+    socket.emit(TYPING, {chatId, isTyping});
   }
 
 
@@ -121,6 +159,7 @@ class ChatContainer extends Component {
           logout={logout}
           chats={chats}
           user={user}
+          onSendPrivateMessage={this.sendOpenPrivateMessage}
           activeChat={activeChat}
           setActiveChat={this.setActiveChat}/>
 
@@ -136,8 +175,8 @@ class ChatContainer extends Component {
                   messages={activeChat.messages}/>
 
                 <MessageInput 
-                  sendTyping={(doneTyping) => {
-                    this.sendTyping(activeChat.id, doneTyping)
+                  sendTyping={(isTyping) => {
+                    this.sendTyping(activeChat.id, isTyping)
                   }}
                   sendMessage={ (message) => {
                     this.sendMessage(activeChat.id, message)

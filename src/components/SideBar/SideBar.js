@@ -4,8 +4,25 @@ import {MdEject} from 'react-icons/md'
 
 class SideBar extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      receiver: ""
+    }
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { receiver } = this.state;
+    const { onSendPrivateMessage } = this.props;
+
+    onSendPrivateMessage(receiver);
+
+  }
+
   render() {
     const {chats, activeChat, user, setActiveChat, logout} = this.props;
+    const { receiver } = this.state;
 
     return ( 
       <div className="sidebar">
@@ -20,10 +37,14 @@ class SideBar extends Component {
           </div>
         </div>
 
-        <div className="sidebar__searchContainer">
+        <form className="sidebar__searchContainer"
+          onSubmit={this.handleSubmit}>
           <i className="sidebar__searchContainer--searchIcon"><FaSearch /></i>
-          <input type="text" placeholder="Search..." />
-        </div>
+          <input type="text" 
+            value={receiver}
+            onChange={(e) => { this.setState({ receiver: e.target.value })}}
+            placeholder="Search..." />
+        </form>
 
         <div ref="users" 
             onClick={(e) => { (e.target === this.refs.user) && setActiveChat(null)}} 
@@ -32,11 +53,10 @@ class SideBar extends Component {
           {
             chats.map(chat => {
               if (chat.name) {
-                
                 const lastMessage = chat.messages[chat.messages.length - 1];
-                const user = chat.users.find(({ name }) => {
-                  return name !== this.props.name;
-                }) || { name: "Community" };
+                const chatSideName = chat.users.find((name) => {
+                  return name !== user.name;
+                }) || "Community";
                 const classNames = activeChat && activeChat.id === chat.id ? "active" : "";
 
                 return ( 
@@ -45,11 +65,11 @@ class SideBar extends Component {
                           key={chat.id}>
 
                         <div className="sidebar__users--userPhoto">
-                          {user.name[0].toUpperCase()}
+                          {chatSideName[0].toUpperCase()}
                         </div>
 
                         <div className="sidebar__users--userInfo">
-                          <div className="name">{user.name}</div>
+                          <div className="name">{chatSideName}</div>
                           {lastMessage && <div className="last-message">
                             {lastMessage.message}
                           </div>}

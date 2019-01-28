@@ -9,6 +9,10 @@ export default class MessageInput extends Component {
       isTyping: false
     };
   }
+
+  componentWillUnmount() {
+    this.stopCheckingTyping();
+  }
   
   handleSubmit = (e) => {
     e.preventDefault();
@@ -21,11 +25,41 @@ export default class MessageInput extends Component {
   }
 
   sendTyping = () => {
+    this.lastUpdateTime = Date.now();
+    if (!this.state.isTyping) {
+      this.setState({ isTyping: true });
+      this.props.sendTyping(true);
+      this.startCheckingTyping();
+    }
+  };
 
-  }
+  /**
+   * Start an interval that checks if the user is typing
+   */
+  startCheckingTyping = () => {
+    console.log('Typing...');
+    this.typingInterval = setInterval(() => {
+      if ((Date.now() - this.lastUpdateTime) > 300) {
+        this.setState({ isTyping: false });
+        this.stopCheckingTyping();
+      }
+    }, 300);
+  };
+
+  /**
+   * Start the interval from checking if the user is typing
+   */
+  stopCheckingTyping = () => {
+    console.log("Stop typing...")
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+      this.props.sendTyping(false);
+    }
+  };
+
+
 
   render() {
-
     const {message} = this.state;
 
     return (
