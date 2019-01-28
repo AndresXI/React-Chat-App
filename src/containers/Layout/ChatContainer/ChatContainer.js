@@ -41,7 +41,8 @@ class ChatContainer extends Component {
    */
   sendOpenPrivateMessage = (receiver) => {
     const { socket, user } = this.props;
-    socket.emit(PRIVATE_MESSAGE, { receiver, sender: user.name });
+    const { activeChat } = this.state;
+    socket.emit(PRIVATE_MESSAGE, { receiver, sender: user.name, activeChat });
   }
   /**
    * Reset the chat back to only the chat passed in.

@@ -79,13 +79,18 @@ module.exports = function (socket) {
   });
 
   // Activate private messaging event
-  socket.on(PRIVATE_MESSAGE, ({ receiver, sender }) => {
+  socket.on(PRIVATE_MESSAGE, ({ receiver, sender , activeChat}) => {
     if (receiver in connectedUsers) {
-      const newChat = createChat({ name: `${receiver} & ${sender}`, users: [receiver, sender] });
       const receiverSocket = connectedUsers[receiver].socketId;
-      // send an event to the receiverSocket
-      socket.to(receiverSocket).emit(PRIVATE_MESSAGE, newChat);
-      socket.emit(PRIVATE_MESSAGE, newChat);
+
+      if (activeChat === null || activeChat.id === communityChat.id) {
+        const newChat = createChat({ name: `${receiver} & ${sender}`, users: [receiver, sender] });
+        // send an event to the receiverSocket
+        socket.to(receiverSocket).emit(PRIVATE_MESSAGE, newChat);
+        socket.emit(PRIVATE_MESSAGE, newChat);
+      } else {
+        socket.to(receiverSocket).emit(PRIVATE_MESSAGE, activeChat);
+      }    
     }
   });
 };

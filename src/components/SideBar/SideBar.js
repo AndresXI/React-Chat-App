@@ -17,7 +17,7 @@ class SideBar extends Component {
     const { onSendPrivateMessage } = this.props;
 
     onSendPrivateMessage(receiver);
-
+    this.setState({ receiver: "" })
   }
 
   render() {
