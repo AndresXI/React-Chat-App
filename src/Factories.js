@@ -30,13 +30,14 @@ const createMessage = ({message = "", sender = ""} = {}) => (
 /**
  * Create a Chat object
  * */
-const createChat = ({messages = [], name = "Community", users = []} = {}) => (
+const createChat = ({messages = [], name = "Community", users = [], isCommunity = false} = {}) => (
   {
     id: uuidv4(),
-    name,
+    name: isCommunity ? "Community" : createChatNameFromUsers(users),
     messages,
     users,
-    typingUsers: []
+    typingUsers: [],
+    isCommunity
   }
 );
 
@@ -48,10 +49,18 @@ const getTime = (date) => {
   return `${date.getHours()}:${("0" + date.getMinutes()).slice(-2)}`;
 };
 
+/**
+ * Set the chat name from users
+ */
+const createChatNameFromUsers = (users, excludedUser = "") => {
+  return users.filter(username => username !== excludedUser).join(' & ') || 'Empty Users'
+}
+
 module.exports = {
   createUser,
   createMessage,
-  createChat
+  createChat,
+  createChatNameFromUsers
 };
 
 

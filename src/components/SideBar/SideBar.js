@@ -1,15 +1,32 @@
 import React, {Component} from 'react';
 import {FaBars, FaSearch, FaChevronDown} from 'react-icons/fa';
-import {MdEject} from 'react-icons/md'
+import {MdEject} from 'react-icons/md';
+import { SidebarOptions } from './SidebarOptions';
+import { get, last, differenceBy } from 'lodash';
+import { createChatNameFromUsers } from '../../Factories';
 
 class SideBar extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      receiver: ""
+      receiver: "",
+      activeSideBar: SideBar.type.CHATS
     }
   };
+
+  static type = {
+    CHATS: 'chats',
+    USERS: 'users'
+  }
+
+  addChatForUser = (username) => {
+    this.props.onSendPrivateMessage(username);
+  }
+
+  setActiveSideBar = (newSideBar) => {
+    this.setState({ activeSideBar: newSideBar });
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -21,8 +38,8 @@ class SideBar extends Component {
   }
 
   render() {
-    const {chats, activeChat, user, setActiveChat, logout} = this.props;
-    const { receiver } = this.state;
+    const {chats, activeChat, user, setActiveChat, logout, users} = this.props;
+    const { receiver, activeSideBar } = this.state;
 
     return ( 
       <div className="sidebar">
@@ -46,39 +63,45 @@ class SideBar extends Component {
             placeholder="Search..." />
         </form>
 
+        <div className="sidebar__select">
+          <div 
+            onClick={() => this.setActiveSideBar(SideBar.type.CHATS)}
+            className={`sidebar__select--options ${(activeSideBar === SideBar.type.CHATS) ? 'active' : ''}`}>
+              <span>Chats</span>
+            </div>
+          <div 
+            onClick={() => this.setActiveSideBar(SideBar.type.USERS)}
+            className={`sidebar__select--options ${(activeSideBar === SideBar.type.USERS) ? 'active' : ''}`}>
+              <span>Users</span>
+            </div>
+        </div>
+
         <div ref="users" 
             onClick={(e) => { (e.target === this.refs.user) && setActiveChat(null)}} 
             className="sidebar__users">
-
           {
+            activeSideBar === SideBar.type.CHATS ?
+
             chats.map(chat => {
               if (chat.name) {
-                const lastMessage = chat.messages[chat.messages.length - 1];
-                const chatSideName = chat.users.find((name) => {
-                  return name !== user.name;
-                }) || "Community";
-                const classNames = activeChat && activeChat.id === chat.id ? "active" : "";
-
                 return ( 
-                      <div className={`sidebar__users--user ${classNames}`} 
-                          onClick={() => setActiveChat(chat)} 
-                          key={chat.id}>
-
-                        <div className="sidebar__users--userPhoto">
-                          {chatSideName[0].toUpperCase()}
-                        </div>
-
-                        <div className="sidebar__users--userInfo">
-                          <div className="name">{chatSideName}</div>
-                          {lastMessage && <div className="last-message">
-                            {lastMessage.message}
-                          </div>}
-                        </div>
-                      </div>
-                      );
-            }
-            return null;
-          })}
+                  <SidebarOptions 
+                    lastMessage={ get(last(chat.messages), 'message', '') }
+                    name={chat.isCommunity ? chat.name : createChatNameFromUsers(chat.users, user.name)}  
+                    onClick={() => {this.props.setActiveChat(chat)} }
+                    active={activeChat.id === chat.id}
+                    key={chat.id}/> );
+              }
+          })
+          
+          : differenceBy(users, [user], 'name').map((user) => {
+              return <SidebarOptions 
+                  onClick={() => {this.addChatForUser(user.name)}}
+                  name={user.name}
+                  key={user.id}/>
+              
+            })
+          }
         </div>
 
         <div className="sidebar__currentUser">

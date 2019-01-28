@@ -13,6 +13,7 @@ class ChatContainer extends Component {
 
     this.state = {
       chats: [],
+      users: [{id: 1, name:"mike"}, {id: 2, name:"jimmy"}, {id: 3, name:"luis"}],
       activeChat: null
     }
   };
@@ -151,7 +152,7 @@ class ChatContainer extends Component {
 
   render() {
     const { user, logout} = this.props;
-    const {chats, activeChat} = this.state;
+    const {chats, activeChat, users} = this.state;
 
     return (
       <div className="container">
@@ -160,6 +161,7 @@ class ChatContainer extends Component {
           logout={logout}
           chats={chats}
           user={user}
+          users={users}
           onSendPrivateMessage={this.sendOpenPrivateMessage}
           activeChat={activeChat}
           setActiveChat={this.setActiveChat}/>
