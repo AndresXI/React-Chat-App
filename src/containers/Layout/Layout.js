@@ -46,7 +46,7 @@ class Layout extends Component {
 
   /** Lets the user logout. */
   logout = () => {
-    // Emmit to the server that the user has logged out
+    // Emit to the server that the user has logged out
     const { socket } = this.state;
     socket.emit(LOGOUT);
     this.setState({ user: null });

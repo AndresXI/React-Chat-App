@@ -1,9 +1,16 @@
 import React, {Component} from 'react';
 import SideBar from '../../../components/SideBar/SideBar';
-import { COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED, TYPING, PRIVATE_MESSAGE } from '../../../Events';
+import { COMMUNITY_CHAT, 
+  MESSAGE_SENT,
+  MESSAGE_RECEIVED,
+  TYPING,
+  USER_DISCONNECTED,
+  USER_CONNECTED, 
+  PRIVATE_MESSAGE } from '../../../Events';
 import ChatHeading from '../../../components/ChatRoom/ChatHeading/ChatHeading';
 import Messages from '../../../components/ChatRoom/Messages/Messages';
 import MessageInput from '../../../components/ChatRoom/MessageInput/MessageInput';
+import { values } from 'lodash';
 
 
 
@@ -13,27 +20,37 @@ class ChatContainer extends Component {
 
     this.state = {
       chats: [],
-      users: [{id: 1, name:"mike"}, {id: 2, name:"jimmy"}, {id: 3, name:"luis"}],
+      users: [],
       activeChat: null
     }
   };
 
   componentDidMount() {
     const {socket} = this.props;
-    socket.emit(COMMUNITY_CHAT, this.resetChat);
     this.initSocket(socket);
   };
+
+  componentWillUnmount() {
+    const { socket } = this.props;
+    socket.off(PRIVATE_MESSAGE);
+    socket.off(USER_DISCONNECTED);
+    socket.off(USER_CONNECTED);
+  }
 
   /**
    * Initialize socket
    */
   initSocket = (socket) => {
-    const { user } = this.props;
-
     socket.emit(COMMUNITY_CHAT, this.resetChat);
     socket.on(PRIVATE_MESSAGE, this.addChat);
     socket.on('connect', () => {
       socket.emit(COMMUNITY_CHAT, this.resetChat);
+    });
+    socket.on(USER_CONNECTED, (users) => {
+      this.setState({ users: values(users) });
+    });
+    socket.on(USER_DISCONNECTED, (users) => {
+      this.setState({ users: values(users) });
     });
   };
 
