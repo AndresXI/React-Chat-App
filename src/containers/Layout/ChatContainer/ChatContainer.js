@@ -4,13 +4,14 @@ import { COMMUNITY_CHAT,
   MESSAGE_SENT,
   MESSAGE_RECEIVED,
   TYPING,
+  NEW_CHAT_USER,
   USER_DISCONNECTED,
   USER_CONNECTED, 
   PRIVATE_MESSAGE } from '../../../Events';
 import ChatHeading from '../../../components/ChatRoom/ChatHeading/ChatHeading';
 import Messages from '../../../components/ChatRoom/Messages/Messages';
 import MessageInput from '../../../components/ChatRoom/MessageInput/MessageInput';
-import { values } from 'lodash';
+import { values, difference, differenceBy } from 'lodash';
 
 
 
@@ -35,6 +36,7 @@ class ChatContainer extends Component {
     socket.off(PRIVATE_MESSAGE);
     socket.off(USER_DISCONNECTED);
     socket.off(USER_CONNECTED);
+    socket.off(NEW_CHAT_USER);
   }
 
   /**
@@ -42,16 +44,24 @@ class ChatContainer extends Component {
    */
   initSocket = (socket) => {
     socket.emit(COMMUNITY_CHAT, this.resetChat);
+
     socket.on(PRIVATE_MESSAGE, this.addChat);
+
     socket.on('connect', () => {
       socket.emit(COMMUNITY_CHAT, this.resetChat);
     });
+
     socket.on(USER_CONNECTED, (users) => {
       this.setState({ users: values(users) });
     });
+
     socket.on(USER_DISCONNECTED, (users) => {
+      const removedUsers = differenceBy(this.state.users, values(users), 'id');
+      this.removeUsersFromChat(removedUsers);
       this.setState({ users: values(users) });
     });
+
+    socket.on(NEW_CHAT_USER, this.addUserToChat);
   };
 
   /**
@@ -62,12 +72,33 @@ class ChatContainer extends Component {
     const { activeChat } = this.state;
     socket.emit(PRIVATE_MESSAGE, { receiver, sender: user.name, activeChat });
   }
+
+  addUserToChat = ({ chatId, newUser }) => {
+    const { chats } = this.state;
+    const newChats = chats.map(chat => {
+      if (chat.id === chatId) {
+        return Object.assign({}, chat, { users: [...chat.users, newUser]})
+      }
+      return chat;
+    })
+    this.setState({ chats: newChats });
+  };
+
+  removeUsersFromChat = (removeUsers) => {
+    const { chats } = this.state;
+    const newChats = chats.map(chat => {
+      let newUsers = difference(chat.users, removeUsers.map(
+        username => username.name));
+        return Object.assign({}, chat, { users: newUsers });
+    });
+    this.setState({ chats: newChats });
+  };
+
   /**
    * Reset the chat back to only the chat passed in.
    * @param chat {Chat}
    */
   resetChat = (chat) => {
-    console.log('reset chat..', chat)
     return this.addChat(chat, true);
   };
 
@@ -79,7 +110,6 @@ class ChatContainer extends Component {
    * @param reset {boolean} if true will set the chat as the only chat
    */
   addChat = (chat, reset = false) => {
-    // console.log(chat);
     const {socket} = this.props;
     const {chats} = this.state;
 
@@ -98,7 +128,6 @@ class ChatContainer extends Component {
    * to chat with the chatId passed in.
    */
   addMessageToChat = (chatId) => {
-
     return message => {
       const {chats} = this.state;
 
