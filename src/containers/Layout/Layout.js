@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
-import {USER_CONNECTED, LOGOUT} from '../../Events';
+import {USER_CONNECTED, LOGOUT, VERIFY_USER} from '../../Events';
 import LoginForm from './LoginForm/LoginForm';
 import ChatContainer from './ChatContainer/ChatContainer';
 
@@ -25,11 +25,26 @@ class Layout extends Component {
   /** Initialize and connect socket.io */
   initSocket = () => {
     const socket = io(socketUrl);
+
     socket.on('connect', () => {
-      console.log('CLIENT CONNECTED');
+      if (this.state.user) {
+        this.reconnect(socket);
+      } else {
+        console.log("CLIENT CONNECTED");
+      }
     });
     this.setState({ socket });
   };
+
+  reconnect = (socket) => {
+    socket.emit(VERIFY_USER, this.state.user.name, ({isUser, user}) => {
+      if (isUser) {
+        this.setState({ user: null })
+      } else {
+        this.setUser({user: user})
+      }
+    })
+  }
 
 
   /**

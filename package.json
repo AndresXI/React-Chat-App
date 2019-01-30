@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently 'npm run react' 'npm run server'",
+    "start": "node server/app.js",
+    "dev": "concurrently 'npm run react' 'npm run server'",
     "react": "webpack-dev-server --open --mode development",
     "server": "nodemon server/app.js",
     "build": "webpack -p"
@@ -45,6 +46,7 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
+    "express": "^4.16.4",
     "lodash": "^4.17.11",
     "react-icons": "^3.3.0",
     "socket.io": "^2.2.0",
